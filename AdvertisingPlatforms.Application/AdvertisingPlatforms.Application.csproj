@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
-    <Folder Include="Queries\" />
-    <Folder Include="DTOs\" />
+    <PackageReference Include="MediatR" Version="13.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AdvertisingPlatforms.Domain\AdvertisingPlatforms.Domain.csproj" />
   </ItemGroup>
 
 </Project>
