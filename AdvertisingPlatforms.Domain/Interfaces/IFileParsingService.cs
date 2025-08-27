@@ -9,6 +9,6 @@ namespace AdvertisingPlatforms.Domain.Interfaces
 {
     public interface IFileParsingService
     {
-        public Task<List<AdPlatform>> ParsePlatformsAsync(Stream stream, CancellationToken cancellationToken, List<ErrorLine> errorLines)
+        public Task<List<AdPlatform>> ParsePlatformsAsync(Stream stream, CancellationToken cancellationToken, List<ErrorLine> errorLines);
     }
 }

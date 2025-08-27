@@ -1,5 +1,6 @@
 ﻿using AdvertisingPlatforms.Domain.Entites;
 using AdvertisingPlatforms.Domain.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,21 @@ namespace AdvertisingPlatforms.Application.Services
 {
     public class FileParsingService : IFileParsingService
     {
+        private readonly ILogger<FileParsingService> _logger;
+
+        public FileParsingService(ILogger<FileParsingService> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task<List<AdPlatform>> ParsePlatformsAsync(Stream stream, CancellationToken cancellationToken, List<ErrorLine> errorLines)
         {
+            _logger.LogInformation("Starting file parsing");
+
             var root = new LocationNode { Name = "" };
             var platforms = new List<AdPlatform>();
+            int totalLines = 0;
+            int successLines = 0;
 
             using var reader = new StreamReader(stream);
             int lineNumber = 0;
@@ -23,7 +35,8 @@ namespace AdvertisingPlatforms.Application.Services
                 cancellationToken.ThrowIfCancellationRequested();
 
                 lineNumber++;
-                var line = await reader.ReadLineAsync(); // асинхронное чтение
+                totalLines++;
+                var line = await reader.ReadLineAsync();
                 if (string.IsNullOrWhiteSpace(line)) continue;
 
                 try
@@ -46,6 +59,7 @@ namespace AdvertisingPlatforms.Application.Services
                         Locations = locList
                     };
                     platforms.Add(platform);
+                    successLines++;
 
                     foreach (var location in platform.Locations)
                     {
@@ -64,15 +78,18 @@ namespace AdvertisingPlatforms.Application.Services
                         currentNode.Platforms.Add(platform);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    _logger.LogWarning(ex, "Error parsing line {LineNumber}: {LineContent}", lineNumber, line);
                     errorLines.Add(new ErrorLine(lineNumber, line));
                 }
             }
 
+            _logger.LogInformation("File parsing completed. Total lines: {TotalLines}, Success: {SuccessLines}, Errors: {ErrorLines}",
+                totalLines, successLines, errorLines.Count);
+
             return platforms;
         }
-
     }
 
 }
