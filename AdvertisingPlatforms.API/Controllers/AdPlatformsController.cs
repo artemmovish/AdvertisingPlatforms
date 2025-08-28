@@ -89,7 +89,7 @@ namespace AdvertisingPlatforms.API.Controllers
                 return Ok(new ApiResponse<FileProcessingResult>
                 {
                     Success = true,
-                    Data = fileProcessingResult,
+                    Data = fileProcessingResult,   
                     Errors = fileProcessingResult.FailedLines
                         .Take(10)
                         .Select((line, index) => $"Line error {index + 1}: {line}")

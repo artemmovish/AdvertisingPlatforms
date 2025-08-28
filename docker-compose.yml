@@ -1,0 +1,9 @@
+services:
+  advertisingplatforms.api:
+    image: ${DOCKER_REGISTRY-}advertisingplatformsapi
+    build:
+      context: .
+      dockerfile: AdvertisingPlatforms.API/Dockerfile
+    ports:
+    - "5050:5050"   
+    - "5051:5051"   
